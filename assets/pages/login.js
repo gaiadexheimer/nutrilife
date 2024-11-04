@@ -1,26 +1,26 @@
-import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
+import { View, Text, StyleSheet, TouchableOpacity } from 'react-native'
 import { useNavigation } from '@react-navigation/core';
 
-export function Login(){
-    
-    const navigation = useNavigation()
+export function Login() {
 
-  return(
+  const navigation = useNavigation()
+
+  return (
 
     <View style={styles.page}>
       <View style={styles.area}>
 
-      <View style={styles.loginBox}>
-      <Text style={styles.loginAndPasswordText}>Email</Text>
-      </View>
-      
-      <View style={styles.passwordBox}>
-      <Text style={styles.loginAndPasswordText}>Senha</Text>
-      </View>
-    
-      <TouchableOpacity style={styles.enterButton} onPress={() => navigation.navigate('Menu')}>
-        <Text style={styles.enterText}>Entrar</Text>
-      </TouchableOpacity>
+        <View style={styles.loginBox}>
+          <Text style={styles.loginAndPasswordText}>Email</Text>
+        </View>
+
+        <View style={styles.passwordBox}>
+          <Text style={styles.loginAndPasswordText}>Senha</Text>
+        </View>
+
+        <TouchableOpacity style={styles.enterButton} onPress={() => navigation.navigate('Menu')}>
+          <Text style={styles.enterText}>Entrar</Text>
+        </TouchableOpacity>
 
       </View>
     </View>
@@ -28,13 +28,13 @@ export function Login(){
 }
 
 const styles = StyleSheet.create({
-  page:{
+  page: {
     flex: 1,
     backgroundColor: "#222221",
     alignItems: 'center',
     justifyContent: 'center'
   },
-  area:{
+  area: {
     height: 560,
     width: 320,
     backgroundColor: 'rgba(178, 178, 207, 0.3)',
@@ -43,7 +43,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(178, 178, 207, 1)'
   },
-  loginBox:{
+  loginBox: {
     height: 40,
     width: 250,
     marginTop: 240,
@@ -51,7 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: 'center'
   },
-  passwordBox:{
+  passwordBox: {
     height: 40,
     width: 250,
     marginTop: 15,
@@ -59,11 +59,11 @@ const styles = StyleSheet.create({
     backgroundColor: "white",
     justifyContent: 'center'
   },
-  loginAndPasswordText:{
+  loginAndPasswordText: {
     color: "gray",
     marginLeft: 15
   },
-  enterButton:{
+  enterButton: {
     height: 40,
     width: 200,
     marginTop: 40,
@@ -72,7 +72,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  enterText:{
+  enterText: {
     color: "white"
   }
 })

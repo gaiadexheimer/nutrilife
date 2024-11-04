@@ -3,43 +3,35 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export function Substituicoes({ title, proteinOptions, carbsOptions, defaultProtein, defaultCarb }) {
+export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultProtein, defaultCarb }) {
     const navigation = useNavigation();
 
-    const [protein, setProtein] = useState(defaultProtein);
-    const [carb, setCarb] = useState(defaultCarb);
-    const [showProteinOptions, setShowProteinOptions] = useState(false);
-    const [showCarbOptions, setShowCarbOptions] = useState(false);
+    const [protein, setProtein] = useState(defaultProtein); //protein ta recebendo Ovos
+    const [carb, setCarb] = useState(defaultCarb); //carb ta recebendo Pao
+    const [showProteinOptions, setShowProteinOptions] = useState(false); //showProteinOptions inicia como false
+    const [showCarbOptions, setShowCarbOptions] = useState(false); //showCarbOptions inicia como false
 
-    useEffect(() => {
-        // Load saved preferences from AsyncStorage when the component mounts
-        const loadPreferences = async () => {
-            const savedProtein = await AsyncStorage.getItem('defaultProtein');
-            const savedCarb = await AsyncStorage.getItem('defaultCarb');
+    _retrieveData = async () => {
+        try {
+            const value = await AsyncStorage.getItem('carb');
+            if (value !== null) {
+                // We have data!!
+                console.log('Retrieved carb is ', carb);
+            }
+        } catch (error) {
+            // Error retrieving data
+            console.log('Error retrieving carb ', carb);
+        }
+    };
 
-            // Set protein and carb from saved values or default values
-            if (savedProtein) setProtein(savedProtein);
-            if (savedCarb) setCarb(savedCarb);
-        };
-
-        loadPreferences();
-    }, []);
-
-    useEffect(() => {
-        // Save protein preference to AsyncStorage when it changes
-        const saveProtein = async () => {
-            await AsyncStorage.setItem('defaultProtein', protein);
-        };
-        saveProtein();
-    }, [protein]);
-
-    useEffect(() => {
-        // Save carb preference to AsyncStorage when it changes
-        const saveCarb = async () => {
-            await AsyncStorage.setItem('defaultCarb', carb);
-        };
-        saveCarb();
-    }, [carb]);
+    _storeData = async () => {
+        try {
+            await AsyncStorage.setItem('carb', carb);
+        } catch (error) {
+            // Error saving data
+            console.log('Error storing carb ', carb);
+        }
+    };
 
     const handleProteinOptionClick = (option) => {
         setProtein(option);
@@ -59,8 +51,8 @@ export function Substituicoes({ title, proteinOptions, carbsOptions, defaultProt
         <View style={styles.page}>
             <View style={styles.header}></View>
             <View style={styles.area}>
-                <View style={styles.titleView}>
-                    <Text style={styles.options}>{title}</Text>
+                <View style={styles.mealTypeView}>
+                    <Text style={styles.options}>{mealType}</Text>
                 </View>
                 <ScrollView>
                     {/* Protein Dropdown */}
@@ -117,7 +109,7 @@ const styles = StyleSheet.create({
         width: "100%",
         backgroundColor: "#7B7B8E"
     },
-    titleView: {
+    mealTypeView: {
         alignSelf: 'center',
         marginTop: 15
     },

@@ -9,15 +9,18 @@ export function RegistroRefeicoes() {
   const numberOfMeals = 6;
   const mealsNumber = Array.from({ length: numberOfMeals });
   const mealName = ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar', 'Ceia', 'Refeição Livre'];
-  //const navigationDestinations = ['CafeDaManha', 'Almoco', 'Lanche', 'Jantar', 'Ceia', 'RefeicaoLivre'];
 
   //O estado inicial de buttonSources vai ser um array de tamanho numberOfMeals, em que cada elemento do array vai ser a mesma imagem circle.png
   const [buttonSources, setButtonSources] = useState(Array(numberOfMeals).fill(require('../circle.png')));
   //Todos os elementos começam como 'unchecked', ou seja, setar todos os estados iniciam com false no array das meals
   const [checkedStates, setCheckedStates] = useState(Array(numberOfMeals).fill(false));
 
-  const navigateToDestination = (destination, { mealType, defaultProtein, defaultCarb, defaultOthers=[]}) => {
-    navigation.navigate(destination, {mealType, defaultProtein, defaultCarb, defaultOthers});
+  /*const navigateToDestination = (destination, { mealType, defaultProtein, defaultCarb, defaultOthers = [] }) => {
+    navigation.navigate(destination, { mealType, defaultProtein, defaultCarb, defaultOthers });
+  };*/
+
+  const navigateToDestination = (destination, { mealType }) => {
+    navigation.navigate(destination, { mealType });
   };
 
 
@@ -43,7 +46,8 @@ export function RegistroRefeicoes() {
       <ScrollView contentContainerStyle={styles.page}>
         {mealsNumber.map((_, index) => (    //the .map() method iterates over each item of the mealsNumber array. First asrgument is ignored because it is not needed. Second argument is the index of the current item. This function return a TouchableOpacity component for each item in mealsNumber array.
           <TouchableOpacity
-            onPress={() => navigateToDestination('Refeicao', {mealType: mealName[index]})}//navigationDestinations[index])} // navigationDestinations[index] ta pegando o index de mealsNumber e aplicando no array navigationDestinations, pra ir pra aquela destination do index que foi passado
+            onPress={() => navigateToDestination('Refeicao', { mealType: mealName[index] })}
+            //ta pegando o index de mealsNumber e aplicando no array navigationDestinations, pra ir pra aquela destination do index que foi passado
             key={index}
             style={styles.mealBox}
           >

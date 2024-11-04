@@ -2,57 +2,65 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { useRoute } from '@react-navigation/native';
+import { MealOptions } from './mealOptions';
 
 export function Refeicao() {
 
   const route = useRoute();
   //usando os parametros que enviei em registroDeRefeicoes
-  const {mealType} = route.params;
+  const { mealType } = route.params;
 
   const mealDefaults = {
     'Café da Manhã': {
-        defaultProtein: 'Ovos',
-        defaultCarb: 'Pão',
-        defaultOthers: ['Banana'],
+      defaultProtein: 'Ovos',
+      defaultCarb: 'Pão',
+      defaultOthers: ['Banana'],
     },
     'Almoço': {
-        defaultProtein: 'Carne',
-        defaultCarb: 'Arroz',
-        defaultOthers: ['Feijão', 'Salada'],
+      defaultProtein: 'Carne',
+      defaultCarb: 'Arroz',
+      defaultOthers: ['Feijão', 'Salada'],
     },
     'Lanche': {
-        defaultProtein: 'Atum',
-        defaultCarb: 'Biscoito',
-        defaultOthers: ['Fruta'],
+      defaultProtein: 'Atum',
+      defaultCarb: 'Biscoito',
+      defaultOthers: ['Fruta'],
     },
     'Jantar': {
-        defaultProtein: 'Peixe',
-        defaultCarb: 'Batata',
-        defaultOthers: ['Legumes'],
+      defaultProtein: 'Peixe',
+      defaultCarb: 'Batata',
+      defaultOthers: ['Legumes'],
     },
-};
+    'Refeição Livre': {
+      defaultOthers: [],
+    },
+  };
 
   // Get defaults based on mealType
   const defaults = mealDefaults[mealType] || {};
-  const { defaultProtein, defaultCarb, defaultOthers } = defaults; //cria 3 novas variáveis separadas e atribui a elas os valores de cada default com base na mealtype
+  const { defaultProtein, defaultCarb, defaultOthers = [] } = defaults; //cria 3 novas variáveis separadas e atribui a elas os valores de cada default com base na mealtype
 
   const navigation = useNavigation();
   const [defaultOption, setDefaultOption] = useState(0);
   const numberOfOptions = 2;
   const mealOptions = Array.from({ length: numberOfOptions });
-  const navigationDestinations = ['CafeDaManhaOptions', 'AlmocoOptions', 'LancheOptions', 'JantarOptions', 'CeiaOptions', 'LivreOptions'];
+  const navigationDestination = ['MealOptions'];
+  //const navigationDestinations = ['CafeDaManhaOptions', 'AlmocoOptions', 'LancheOptions', 'JantarOptions', 'CeiaOptions', 'LivreOptions'];
 
-  const handleDefault = (index) => {
+  /*const handleDefault = (index) => {
     if (defaultOption !== index) {
       setDefaultOption(index);
     } else {
       setDefaultOption(defaultOption);
     }
+  };*/
+
+  const handleDefault = (index) => {
+    setDefaultOption(index);
   };
 
-  const navigateToDestination = (index) => {
-    const destination = navigationDestinations[index];
-    navigation.navigate(destination);
+  const navigateToDestination = () => {
+    navigation.navigate('MealOptions', { mealType });
   };
 
 

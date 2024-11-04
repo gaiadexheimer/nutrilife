@@ -1,7 +1,7 @@
 // refeicaoOpcoes.js
 import React from 'react';
 import { Substituicoes } from './substituicoes';
-import { useDefaultOptions } from './substituicoesOpcoes'; // Import the hook to manage default options
+import { useDefaultOptions } from './mealOptions'; // Import the hook to manage default options
 
 export function CafeDaManha() {
   const { defaultProteins, defaultCarbs, defaultOthers } = useDefaultOptions(); // Get the default options from the hook
@@ -10,16 +10,16 @@ export function CafeDaManha() {
   const mealType = "Café da Manhã";
   const defaultProtein = defaultProteins[mealType];
   const defaultCarb = defaultCarbs[mealType];
-  const defaultOther = defaultOthers[mealType]; 
+  const defaultOther = defaultOthers[mealType];
 
   return (
     <Substituicoes
-      title="Café da Manhã" 
+      title="Café da Manhã"
       mealType={mealType}
-      defaultProtein={defaultProtein} 
-      defaultCarb={defaultCarb} 
-      defaultOther={defaultOther} 
-      proteinOptions={breakfastProteinOptions} 
+      defaultProtein={defaultProtein}
+      defaultCarb={defaultCarb}
+      defaultOther={defaultOther}
+      proteinOptions={breakfastProteinOptions}
       carbsOptions={breakfastCarbOptions} // Adjust the options based on your carb/protein data
     />
   );
@@ -30,17 +30,17 @@ export function Almoco() {
   const lunchCarbOptions = ['Opção 1', 'Opção 2', 'Opção 3'];
   const lunchProteinOptions = ['Opção 1', 'Opção 2', 'Opção 3'];
   const mealType = "Almoço";
-  const defaultProtein = defaultProteins[mealType]; 
+  const defaultProtein = defaultProteins[mealType];
   const defaultCarb = defaultCarbs[mealType];
 
   return (
-    <Substituicoes 
-      title="Almoço" 
+    <Substituicoes
+      title="Almoço"
       mealType={mealType}
-      defaultProtein={defaultProtein} 
-      defaultCarb={defaultCarb} 
-      proteinOptions={lunchProteinOptions} 
-      carbsOptions={lunchCarbOptions} 
+      defaultProtein={defaultProtein}
+      defaultCarb={defaultCarb}
+      proteinOptions={lunchProteinOptions}
+      carbsOptions={lunchCarbOptions}
     />
   );
 }
@@ -54,13 +54,13 @@ export function Lanche() {
   const defaultCarb = defaultCarbs[mealType];
 
   return (
-    <Substituicoes 
-      title="Lanche" 
+    <Substituicoes
+      title="Lanche"
       mealType={mealType}
-      defaultProtein={defaultProtein} 
-      defaultCarb={defaultCarb} 
-      proteinOptions={snackProteinOptions} 
-      carbsOptions={snackCarbOptions} 
+      defaultProtein={defaultProtein}
+      defaultCarb={defaultCarb}
+      proteinOptions={snackProteinOptions}
+      carbsOptions={snackCarbOptions}
     />
   );
 }
@@ -74,13 +74,13 @@ export function Jantar() {
   const defaultCarb = defaultCarbs[mealType];
 
   return (
-    <Substituicoes 
-      title="Jantar" 
+    <Substituicoes
+      title="Jantar"
       mealType={mealType}
-      defaultProtein={defaultProtein} 
-      defaultCarb={defaultCarb} 
-      proteinOptions={dinnerProteinOptions} 
-      carbsOptions={dinnerCarbOptions} 
+      defaultProtein={defaultProtein}
+      defaultCarb={defaultCarb}
+      proteinOptions={dinnerProteinOptions}
+      carbsOptions={dinnerCarbOptions}
     />
   );
 }
@@ -94,13 +94,13 @@ export function Ceia() {
   const defaultCarb = defaultCarbs[mealType];
 
   return (
-    <Substituicoes 
-      title="Ceia" 
+    <Substituicoes
+      title="Ceia"
       mealType={mealType}
-      defaultProtein={defaultProtein} 
-      defaultCarb={defaultCarb} 
-      proteinOptions={supperProteinOptions} 
-      carbsOptions={supperCarbOptions} 
+      defaultProtein={defaultProtein}
+      defaultCarb={defaultCarb}
+      proteinOptions={supperProteinOptions}
+      carbsOptions={supperCarbOptions}
     />
   );
 }

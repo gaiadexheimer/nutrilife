@@ -1,14 +1,14 @@
-import { View, StyleSheet, Text, Image} from 'react-native'
+import { View, StyleSheet, Text, Image } from 'react-native'
 import { useNavigation } from '@react-navigation/core';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-export function Menu(){
+export function Menu() {
 
   const navigation = useNavigation()
 
-  return(
+  return (
     <View style={styles.page}>
-      
+
       <TouchableOpacity style={styles.menuOption}>
         <Image
           source={require('../plano.png')}
@@ -26,19 +26,19 @@ export function Menu(){
       </TouchableOpacity>
 
     </View>
-    
+
   )
 }
 
 const styles = StyleSheet.create({
-  page:{
+  page: {
     flex: 1,
     backgroundColor: "#222221",
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'space-evenly'
   },
-  menuOption:{
+  menuOption: {
     width: 160,
     height: 160,
     backgroundColor: 'rgba(178, 178, 207, 0.8)',
@@ -46,11 +46,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     borderRadius: 30
   },
-  optionText:{
+  optionText: {
     fontSize: 18,
     color: "white"
   },
-  icon:{
+  icon: {
     width: 40,
     height: 40,
     marginBottom: 20
