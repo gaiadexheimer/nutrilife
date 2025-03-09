@@ -1,8 +1,9 @@
 import { View, StyleSheet, ScrollView, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { TouchableOpacity } from 'react-native-gesture-handler';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Refeicao } from './refeicao';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function RegistroRefeicoes() {
   const navigation = useNavigation();
@@ -24,7 +25,7 @@ export function RegistroRefeicoes() {
   };
 
 
-  const handleButtonPress = (index) => {
+  const handleButtonPress = async (index) => {
     //criando cópias dos arrays buttonSources e checkedStates para que possam ser modificados sem alterar diretamente os arrays originais
     // [...buttonSources] cria uma nova cópia do array buttonSources, e [...checkedStates] cria uma nova cópia do array checkedStates
     const updatedButtonSources = [...buttonSources];
@@ -37,11 +38,36 @@ export function RegistroRefeicoes() {
     //atualiza os arrays originais
     setButtonSources(updatedButtonSources);
     setCheckedStates(updatedCheckedStates);
+
+    //salvar o estado do checked state no async storage
+    await AsyncStorage.setItem('checkedStates', JSON.stringify(updatedCheckedStates));
   };
+
+  // Load the saved state from AsyncStorage when the component mounts
+  useEffect(() => {
+    const loadState = async () => {
+      try {
+        const savedCheckedStates = await AsyncStorage.getItem('checkedStates');
+        if (savedCheckedStates !== null) {
+          const parsedCheckedStates = JSON.parse(savedCheckedStates);
+          setCheckedStates(parsedCheckedStates);
+
+          // Update button sources based on the saved state
+          const updatedButtonSources = parsedCheckedStates.map((state) =>
+            state ? require('../check.png') : require('../circle.png')
+          );
+          setButtonSources(updatedButtonSources);
+        }
+      } catch (error) {
+        console.error('Error loading saved state:', error);
+      }
+    };
+
+    loadState();
+  }, []); // Empty dependency array means this runs only once when the component mounts
 
   return (
     <View style={styles.page}>
-      <View style={styles.header}></View>
 
       <ScrollView contentContainerStyle={styles.page}>
         {mealsNumber.map((_, index) => (    //the .map() method iterates over each item of the mealsNumber array. First asrgument is ignored because it is not needed. Second argument is the index of the current item. This function return a TouchableOpacity component for each item in mealsNumber array.
@@ -73,11 +99,6 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#222221',
     alignItems: 'center',
-  },
-  header: {
-    height: 100,
-    width: '100%',
-    backgroundColor: '#7B7B8E',
   },
   mealBox: {
     height: 80,

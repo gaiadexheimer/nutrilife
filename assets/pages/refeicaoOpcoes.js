@@ -1,4 +1,3 @@
-// refeicaoOpcoes.js
 import React from 'react';
 import { Substituicoes } from './substituicoes';
 import { useDefaultOptions } from './mealOptions'; // Import the hook to manage default options

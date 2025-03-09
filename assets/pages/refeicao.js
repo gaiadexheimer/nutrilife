@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Text, ScrollView, Image, TouchableOpacity } from 'react-native';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation, useFocusEffect } from '@react-navigation/core';
 import { useRoute } from '@react-navigation/native';
-import { MealOptions } from './mealOptions';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function Refeicao() {
-
   const route = useRoute();
-  //usando os parametros que enviei em registroDeRefeicoes
-  const { mealType } = route.params;
+  const { mealType } = route.params; // Get meal type from route params
+
+  const [protein, setProtein] = useState('');
+  const [carb, setCarb] = useState('');
+  const [others, setOthers] = useState([]);
 
   const mealDefaults = {
     'Café da Manhã': {
       defaultProtein: 'Ovos',
       defaultCarb: 'Pão',
-      defaultOthers: ['Banana'],
+      defaultOthers: ['Banana', 'Uvas'],
     },
     'Almoço': {
       defaultProtein: 'Carne',
@@ -36,24 +38,31 @@ export function Refeicao() {
     },
   };
 
-  // Get defaults based on mealType
-  const defaults = mealDefaults[mealType] || {};
-  const { defaultProtein, defaultCarb, defaultOthers = [] } = defaults; //cria 3 novas variáveis separadas e atribui a elas os valores de cada default com base na mealtype
+  // Load saved data from AsyncStorage when component mounts or comes back into focus
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadSavedData = async () => {
+        try {
+          const savedProtein = await AsyncStorage.getItem(`${mealType}_protein`);
+          const savedCarb = await AsyncStorage.getItem(`${mealType}_carb`);
+          const savedOthers = await AsyncStorage.getItem(`${mealType}_others`);
+
+          setProtein(savedProtein || mealDefaults[mealType]?.defaultProtein || '');
+          setCarb(savedCarb || mealDefaults[mealType]?.defaultCarb || '');
+          setOthers(savedOthers ? JSON.parse(savedOthers) : mealDefaults[mealType]?.defaultOthers || []);
+        } catch (error) {
+          console.log('Error loading saved data', error);
+        }
+      };
+
+      loadSavedData(); // Load saved data from AsyncStorage when screen is focused
+    }, [mealType]) // This will run whenever `mealType` changes
+  );
 
   const navigation = useNavigation();
   const [defaultOption, setDefaultOption] = useState(0);
   const numberOfOptions = 2;
   const mealOptions = Array.from({ length: numberOfOptions });
-  const navigationDestination = ['MealOptions'];
-  //const navigationDestinations = ['CafeDaManhaOptions', 'AlmocoOptions', 'LancheOptions', 'JantarOptions', 'CeiaOptions', 'LivreOptions'];
-
-  /*const handleDefault = (index) => {
-    if (defaultOption !== index) {
-      setDefaultOption(index);
-    } else {
-      setDefaultOption(defaultOption);
-    }
-  };*/
 
   const handleDefault = (index) => {
     setDefaultOption(index);
@@ -63,27 +72,22 @@ export function Refeicao() {
     navigation.navigate('MealOptions', { mealType });
   };
 
-
   return (
     <View style={styles.page}>
-      <View style={styles.header}>
-        <Text style={styles.mealTitle}>{mealType}</Text>
-      </View>
       <ScrollView contentContainerStyle={styles.page}>
         {mealOptions.map((_, index) => (
           <View style={defaultOption === index ? styles.defaultOptionBox : styles.nonDefaultOptionBox} key={index}>
             <View style={styles.optionHeader}>
-              <Text style={styles.optionText}>Opcão {index + 1}</Text>
+              <Text style={styles.optionText}>Opção {index + 1}</Text>
               <TouchableOpacity onPress={() => navigateToDestination(index)}>
                 <Image source={require('../editar.png')} style={styles.edit} />
               </TouchableOpacity>
-
             </View>
 
             <View>
-              <Text style={styles.defaultMealDescription}>{defaultProtein}</Text>
-              <Text style={styles.defaultMealDescription}>{defaultCarb}</Text>
-              {defaultOthers.map((food, index) => (
+              <Text style={styles.defaultMealDescription}>{protein}</Text>
+              <Text style={styles.defaultMealDescription}>{carb}</Text>
+              {others.map((food, index) => (
                 <Text style={styles.defaultMealDescription} key={index}>{food}</Text>
               ))}
             </View>
@@ -94,7 +98,6 @@ export function Refeicao() {
               </Text>
             </TouchableOpacity>
           </View>
-
         ))}
       </ScrollView>
     </View>
@@ -107,19 +110,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#222221",
     alignItems: 'center'
   },
-  header: {
-    height: 100,
-    width: "100%",
-    backgroundColor: "#7B7B8E"
-  },
   defaultOptionBox: {
     width: 350,
     height: 300,
     backgroundColor: 'rgba(131, 203, 134, 0.5)',
     marginTop: 25,
     borderRadius: 40,
-    justifyContent: 'space-between', // Align items in a column
-    paddingVertical: 20 // Add padding between the content and the button
+    justifyContent: 'space-between',
+    paddingVertical: 20
   },
   nonDefaultOptionBox: {
     width: 350,
@@ -127,12 +125,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(178, 178, 207, 0.5)',
     marginTop: 25,
     borderRadius: 40,
-    justifyContent: 'space-between', // Align items in a column
-    paddingVertical: 20 // Add padding between the content and the button
+    justifyContent: 'space-between',
+    paddingVertical: 20
   },
   optionHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-evenly', // Align items at the start and end of the row
+    justifyContent: 'space-evenly',
     gap: 100,
   },
   edit: {

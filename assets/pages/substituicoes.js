@@ -6,50 +6,57 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultProtein, defaultCarb }) {
     const navigation = useNavigation();
 
-    const [protein, setProtein] = useState(defaultProtein); //protein ta recebendo Ovos
-    const [carb, setCarb] = useState(defaultCarb); //carb ta recebendo Pao
-    const [showProteinOptions, setShowProteinOptions] = useState(false); //showProteinOptions inicia como false
-    const [showCarbOptions, setShowCarbOptions] = useState(false); //showCarbOptions inicia como false
+    const [protein, setProtein] = useState(defaultProtein); // Initial state from props
+    const [carb, setCarb] = useState(defaultCarb); // Initial state from props
+    const [showProteinOptions, setShowProteinOptions] = useState(false);
+    const [showCarbOptions, setShowCarbOptions] = useState(false);
 
-    _retrieveData = async () => {
-        try {
-            const value = await AsyncStorage.getItem('carb');
-            if (value !== null) {
-                // We have data!!
-                console.log('Retrieved carb is ', carb);
+    // Load saved data from AsyncStorage when component mounts
+    useEffect(() => {
+        const _retrieveData = async () => {
+            try {
+                const savedProtein = await AsyncStorage.getItem(`${mealType}_protein`);
+                const savedCarb = await AsyncStorage.getItem(`${mealType}_carb`);
+                if (savedProtein) setProtein(savedProtein); // Set saved protein
+                if (savedCarb) setCarb(savedCarb); // Set saved carb
+            } catch (error) {
+                console.log('Error retrieving data', error);
             }
-        } catch (error) {
-            // Error retrieving data
-            console.log('Error retrieving carb ', carb);
-        }
-    };
+        };
 
-    _storeData = async () => {
-        try {
-            await AsyncStorage.setItem('carb', carb);
-        } catch (error) {
-            // Error saving data
-            console.log('Error storing carb ', carb);
-        }
-    };
+        _retrieveData(); // Call the function to load saved data
+    }, [mealType]); // Reload data when mealType changes
+
+    // Save data to AsyncStorage when protein or carb changes
+    useEffect(() => {
+        const _storeData = async () => {
+            try {
+                await AsyncStorage.setItem(`${mealType}_protein`, protein); // Save protein
+                await AsyncStorage.setItem(`${mealType}_carb`, carb); // Save carb
+            } catch (error) {
+                console.log('Error storing data', error);
+            }
+        };
+
+        _storeData(); // Store the data when it changes
+    }, [protein, carb, mealType]); // Trigger when protein or carb changes
 
     const handleProteinOptionClick = (option) => {
         setProtein(option);
-        setShowProteinOptions(false);
+        setShowProteinOptions(false); // Close dropdown after selection
     };
 
     const handleCarbOptionClick = (option) => {
-        setCarb(option);  // Ensure this is updating the carb state
-        setShowCarbOptions(false);
+        setCarb(option);
+        setShowCarbOptions(false); // Close dropdown after selection
     };
 
     const getFilteredOptions = (options, selectedOption) => {
-        return options.filter(option => option !== selectedOption);
+        return options.filter(option => option !== selectedOption); // Filter out the selected option
     };
 
     return (
         <View style={styles.page}>
-            <View style={styles.header}></View>
             <View style={styles.area}>
                 <View style={styles.mealTypeView}>
                     <Text style={styles.options}>{mealType}</Text>

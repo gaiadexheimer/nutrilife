@@ -10,7 +10,6 @@ export function MyMealPlan() {
     return (
 
         <><View style={styles.page}>
-            <View style={styles.header}></View>
         </View>
 
             <View style={styles.pagefooter}>
@@ -46,11 +45,6 @@ const styles = StyleSheet.create({
         flexGrow: 1,
         backgroundColor: "#222221",
         alignItems: 'center'
-    },
-    header: {
-        height: 100,
-        width: '100%',
-        backgroundColor: '#7B7B8E',
     },
     pagefooter: {
         height: 100,
