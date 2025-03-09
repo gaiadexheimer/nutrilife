@@ -8,6 +8,7 @@ import { Refeicao } from './assets/pages/refeicao';
 import { CafeDaManha, Almoco, Lanche, Jantar, Ceia } from './assets/pages/refeicaoOpcoes';
 import { Substituicoes } from './assets/pages/substituicoes';
 import { MealOptions } from './assets/pages/mealOptions';
+import { MyMealPlan } from './assets/pages/mymealplan';
 
 const Stack = createStackNavigator();
 
@@ -68,6 +69,11 @@ export default function App() {
         <Stack.Screen
           name="MealOptions"
           component={MealOptions}
+          options={{ headerShown: true }}
+        />
+        <Stack.Screen
+          name="MyMealPlan"
+          component={MyMealPlan}
           options={{ headerShown: true }}
         />
       </Stack.Navigator>
