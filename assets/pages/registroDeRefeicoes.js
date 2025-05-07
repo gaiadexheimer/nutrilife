@@ -2,14 +2,39 @@ import { View, StyleSheet, ScrollView, Text, Image } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import React, { useEffect, useState } from 'react';
-import { Refeicao } from './refeicao';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
 
 export function RegistroRefeicoes() {
   const navigation = useNavigation();
-  const numberOfMeals = 6;
+  const numberOfMeals = 5;
   const mealsNumber = Array.from({ length: numberOfMeals });
-  const mealName = ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar', 'Ceia', 'Refeição Livre'];
+  const mealName = ['Café da Manhã', 'Almoço', 'Lanche', 'Jantar', 'Ceia'];
+
+  useFocusEffect(
+    React.useCallback(() => {
+      const loadState = async () => {
+        try {
+          const savedCheckedStates = await AsyncStorage.getItem('checkedStates');
+          if (savedCheckedStates !== null) {
+            const parsedCheckedStates = JSON.parse(savedCheckedStates);
+            setCheckedStates(parsedCheckedStates);
+
+            // Update button sources based on the saved state
+            const updatedButtonSources = parsedCheckedStates.map((state) =>
+              state ? require('../check.png') : require('../circle.png')
+            );
+            setButtonSources(updatedButtonSources);
+          }
+        } catch (error) {
+          console.error('Error loading saved state:', error);
+        }
+      };
+
+      loadState(); // Load the saved state when screen is focused
+    }, []) // Empty dependency array means this runs only when screen comes back into focus
+  );
+
 
   //O estado inicial de buttonSources vai ser um array de tamanho numberOfMeals, em que cada elemento do array vai ser a mesma imagem circle.png
   const [buttonSources, setButtonSources] = useState(Array(numberOfMeals).fill(require('../circle.png')));
@@ -20,8 +45,8 @@ export function RegistroRefeicoes() {
     navigation.navigate(destination, { mealType, defaultProtein, defaultCarb, defaultOthers });
   };*/
 
-  const navigateToDestination = (destination, { mealType }) => {
-    navigation.navigate(destination, { mealType });
+  const navigateToDestination = (Refeicao, { mealType }) => {
+    navigation.navigate(Refeicao, { mealType });
   };
 
 
@@ -70,13 +95,17 @@ export function RegistroRefeicoes() {
     <View style={styles.page}>
 
       <ScrollView contentContainerStyle={styles.page}>
-        {mealsNumber.map((_, index) => (    //the .map() method iterates over each item of the mealsNumber array. First asrgument is ignored because it is not needed. Second argument is the index of the current item. This function return a TouchableOpacity component for each item in mealsNumber array.
+        {mealsNumber.map((_, index) => (
+          //ta pegando o index de mealsNumber e aplicando no array navigationDestinations, pra ir pra aquela destination do index que foi passado
+          //the .map() method iterates over each item of the mealsNumber array. First asrgument is ignored because it is not needed. Second argument is the index of the current item. This function return a TouchableOpacity component for each item in mealsNumber array.
           <TouchableOpacity
-            onPress={() => navigateToDestination('Refeicao', { mealType: mealName[index] })}
-            //ta pegando o index de mealsNumber e aplicando no array navigationDestinations, pra ir pra aquela destination do index que foi passado
             key={index}
             style={styles.mealBox}
-          >
+
+            onPress={() => {
+              navigateToDestination('Refeicao', { mealType: mealName[index] });
+            }}>
+
             <View style={styles.mealBoxContent}>
               <TouchableOpacity onPress={() => handleButtonPress(index)}>
                 <Image source={buttonSources[index]} style={styles.circle} />
@@ -88,6 +117,19 @@ export function RegistroRefeicoes() {
 
           </TouchableOpacity>
         ))}
+
+        <View>
+          <TouchableOpacity
+            style={styles.mealBox}>
+            <View style={styles.mealBoxContent}>
+              <TouchableOpacity onPress={() => handleButtonPress(5)}>
+                <Image source={buttonSources[5]} style={styles.circle} />
+              </TouchableOpacity>
+              <Text style={styles.mealText}>Livre</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
       </ScrollView>
     </View>
 

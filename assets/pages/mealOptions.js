@@ -2,7 +2,7 @@ import React from 'react';
 import { Substituicoes } from './substituicoes';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-
+import { View, TextInput, Text } from 'react-native';
 
 
 export function MealOptions({ route }) {
@@ -10,58 +10,56 @@ export function MealOptions({ route }) {
 
     const mealOptions = {
         'Café da Manhã': {
-            proteinOptions: ['Ovos', 'Barra proteica', 'Whey', 'Milk'],
-            carbOptions: ['Pão', 'Aveia', 'Tapioca'],
-            defaultProtein: 'Ovos',
-            defaultCarb: 'Pão',
-            otherFoodsOptions: ['Queijo', 'Fruta', 'Requeijão', 'Suco', 'Pasta de amendoim'],
+            proteinOptions: ['2 Ovos', '15g Whey'],
+            carbsOptions: ['50g Pão', 'Aveia'],
+            otherOptions: ['Quinoa', 'Batata'],
+            defaultProtein: '2 Ovos',
+            defaultCarb: '50g Pão',
+            defaultOther: 'Banana',
         },
         'Almoço': {
             proteinOptions: ['Frango', 'Peixe', 'Carne'],
-            carbOptions: ['Arroz', 'Feijão', 'Macarrão'],
+            carbsOptions: ['Arroz', 'Feijão', 'Macarrão'],
+            otherOptions: ['Quinoa', 'Batata'],
             defaultProtein: 'Frango',
             defaultCarb: 'Arroz',
-            otherFoodsOptions: ['Salada', 'Fruta', 'Legumes'],
+            defaultOther: 'Banana',
         },
         'Lanche': {
             proteinOptions: ['Iogurte', 'Barra de proteína'],
-            carbOptions: ['Fruta', 'Biscoito'],
+            carbsOptions: ['Fruta', 'Biscoito'],
+            otherOptions: ['Quinoa', 'Batata'],
             defaultProtein: 'Iogurte',
             defaultCarb: 'Fruta',
-            otherFoodsOptions: ['Biscoito', 'Fruta'],
+            defaultOther: 'Banana',
         },
         'Jantar': {
             proteinOptions: ['Peito de frango', 'Salmão', 'Carne'],
-            carbOptions: ['Quinoa', 'Batata'],
+            carbsOptions: ['Quinoa', 'Batata'],
+            otherOptions: ['Quinoa', 'Batata'],
             defaultProtein: 'Peito de frango',
             defaultCarb: 'Batata',
-            otherFoodsOptions: ['Salada', 'Fruta'],
+            defaultOther: 'Banana',
         },
         'Ceia': {
             proteinOptions: ['Queijo', 'Ovos', 'Peito de peru'],
-            carbOptions: ['Pão integral', 'Crackers'],
+            carbsOptions: ['Pão integral', 'Crackers'],
+            otherOptions: ['Quinoa', 'Batata'],
             defaultProtein: 'Queijo',
             defaultCarb: 'Pão integral',
-            otherFoodsOptions: ['Iogurte', 'Fruta'],
-        },
-        'Livre': {
-            proteinOptions: ['Carne'],
-            carbOptions: ['Pão'],
-            defaultProtein: 'Carne',
-            defaultCarb: 'Pão',
-            otherFoodsOptions: ['Batatas fritas'],
+            defaultOther: 'Banana',
         }
     };
 
 
     // Retrieve the meal options for the given mealType
     const options = mealOptions[mealType];
-    const { proteinOptions, carbOptions, otherFoodsOptions, defaultProtein, defaultCarb } = options;
+    const { proteinOptions, carbsOptions, otherOptions, defaultProtein, defaultCarb, defaultOther } = options;
 
     // State for storing the selected options (Protein, Carb, Other)
     const [selectedProtein, setSelectedProtein] = useState(defaultProtein);
     const [selectedCarb, setSelectedCarb] = useState(defaultCarb);
-    const [selectedOthers, setSelectedOthers] = useState([]);
+    const [selectedOthers, setSelectedOthers] = useState(defaultOther);
 
     // Load saved options from AsyncStorage
     useEffect(() => {
@@ -69,11 +67,11 @@ export function MealOptions({ route }) {
             try {
                 const savedProtein = await AsyncStorage.getItem(`${mealType}_protein`);
                 const savedCarb = await AsyncStorage.getItem(`${mealType}_carb`);
-                const savedOthers = await AsyncStorage.getItem(`${mealType}_others`);
+                const savedOthers = await AsyncStorage.getItem(`${mealType}_other`);
 
                 if (savedProtein) setSelectedProtein(savedProtein);
                 if (savedCarb) setSelectedCarb(savedCarb);
-                if (savedOthers) setSelectedOthers(JSON.parse(savedOthers));
+                if (savedOthers) setSelectedOthers(savedOthers);
             } catch (error) {
                 console.error('Error loading saved options from AsyncStorage:', error);
             }
@@ -87,7 +85,7 @@ export function MealOptions({ route }) {
         try {
             await AsyncStorage.setItem(`${mealType}_protein`, newProtein);
             await AsyncStorage.setItem(`${mealType}_carb`, newCarb);
-            await AsyncStorage.setItem(`${mealType}_others`, JSON.stringify(newOthers));
+            await AsyncStorage.setItem(`${mealType}_other`, newOthers);
         } catch (error) {
             console.error('Error saving options to AsyncStorage:', error);
         }
@@ -109,12 +107,14 @@ export function MealOptions({ route }) {
         saveSelectedOptions(selectedProtein, selectedCarb, newOthers);
     };
 
+    //nessa pagina mealOptions eu retorno o que eu selecionei lá na página de substituicoes
+    //the entire UI of MealOptions is delegated to the Substituicoes component.
     return (
         <Substituicoes
             mealType={mealType}
             proteinOptions={proteinOptions}
-            carbsOptions={carbOptions}
-            otherFoodsOptions={otherFoodsOptions}
+            carbsOptions={carbsOptions}
+            otherOptions={otherOptions}
             selectedProtein={selectedProtein}
             selectedCarb={selectedCarb}
             selectedOthers={selectedOthers}
@@ -123,4 +123,5 @@ export function MealOptions({ route }) {
             onOthersChange={handleOthersChange}
         />
     );
+
 }

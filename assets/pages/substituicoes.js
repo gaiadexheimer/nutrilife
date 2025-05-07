@@ -3,13 +3,15 @@ import { View, Text, StyleSheet, TouchableOpacity, Image, ScrollView } from 'rea
 import { useNavigation } from '@react-navigation/core';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultProtein, defaultCarb }) {
+export function Substituicoes({ mealType, proteinOptions, carbsOptions, otherOptions, defaultProtein, defaultCarb, defaultOther }) {
     const navigation = useNavigation();
 
     const [protein, setProtein] = useState(defaultProtein); // Initial state from props
     const [carb, setCarb] = useState(defaultCarb); // Initial state from props
+    const [other, setOther] = useState(defaultOther);
     const [showProteinOptions, setShowProteinOptions] = useState(false);
     const [showCarbOptions, setShowCarbOptions] = useState(false);
+    const [showOtherOptions, setShowOtherOptions] = useState(false);
 
     // Load saved data from AsyncStorage when component mounts
     useEffect(() => {
@@ -17,8 +19,10 @@ export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultP
             try {
                 const savedProtein = await AsyncStorage.getItem(`${mealType}_protein`);
                 const savedCarb = await AsyncStorage.getItem(`${mealType}_carb`);
+                const savedOthers = await AsyncStorage.getItem(`${mealType}_other`);
                 if (savedProtein) setProtein(savedProtein); // Set saved protein
                 if (savedCarb) setCarb(savedCarb); // Set saved carb
+                if (savedOthers) setOther(savedOthers); // Set saved other
             } catch (error) {
                 console.log('Error retrieving data', error);
             }
@@ -33,13 +37,14 @@ export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultP
             try {
                 await AsyncStorage.setItem(`${mealType}_protein`, protein); // Save protein
                 await AsyncStorage.setItem(`${mealType}_carb`, carb); // Save carb
+                await AsyncStorage.setItem(`${mealType}_other`, other); // Save other
             } catch (error) {
                 console.log('Error storing data', error);
             }
         };
 
         _storeData(); // Store the data when it changes
-    }, [protein, carb, mealType]); // Trigger when protein or carb changes
+    }, [protein, carb, other, mealType]); // Trigger when protein or carb or other changes
 
     const handleProteinOptionClick = (option) => {
         setProtein(option);
@@ -49,6 +54,11 @@ export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultP
     const handleCarbOptionClick = (option) => {
         setCarb(option);
         setShowCarbOptions(false); // Close dropdown after selection
+    };
+
+    const handleOtherOptionClick = (option) => {
+        setOther(option);
+        setShowOtherOptions(false); // Close dropdown after selection
     };
 
     const getFilteredOptions = (options, selectedOption) => {
@@ -99,6 +109,26 @@ export function Substituicoes({ mealType, proteinOptions, carbsOptions, defaultP
                             ))}
                         </View>
                     )}
+
+                    {/* Other Dropdown */}
+                    <View style={styles.scrollview}>
+                        <TouchableOpacity onPress={() => setShowOtherOptions(!showOtherOptions)}>
+                            <View>
+                                <Image source={require('../editar.png')} style={styles.edit} />
+                            </View>
+                        </TouchableOpacity>
+                        <Text style={styles.options}>{other}</Text>
+                    </View>
+                    {showOtherOptions && (
+                        <View>
+                            {getFilteredOptions(otherOptions, other).map((option) => (
+                                <TouchableOpacity key={option} onPress={() => handleOtherOptionClick(option)}>
+                                    <Text style={styles.dropdownOption}>{option}</Text>
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+
                 </ScrollView>
             </View>
         </View>
